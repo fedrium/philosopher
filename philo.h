@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/17 16:11:57 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/04/21 17:38:18 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 typedef	struct s_con {
 	int	sleep;
@@ -22,5 +23,17 @@ typedef	struct s_con {
 	int	think;
 	int	status;
 }				t_con;
+
+typedef struct s_rule {
+	long long time;
+	pthread_mutex_t *lock;
+	int	die_time;
+	int	sleep_time;
+	int	eat_time;
+	int	philo_num;
+	pthread_t number;
+}				t_rule;
+
+long	ft_atoi(char *str);
 
 #endif

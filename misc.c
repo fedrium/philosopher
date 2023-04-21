@@ -1,34 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   misc.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/17 15:56:11 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/21 17:36:25 by cyu-xian         ###   ########.fr       */
+/*   Created: 2023/04/21 16:50:59 by cyu-xian          #+#    #+#             */
+/*   Updated: 2023/04/21 16:51:08 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	establish(void *temp)
+long	ft_atoi(char *str)
 {
-	
-}
-
-int	main(int argc, char **argv)
-{
-	t_rule	rule;
 	int		i;
+	long	nbr;
+	int		neg;
 
-	rule.philo_num = ft_atoi(argv[1]);
-	rule.die_time = ft_atoi(argv[2]);
-	rule.eat_time = ft_atoi(argv[3]);
-	rule.sleep_time = ft_atoi (argv[4]);
 	i = 0;
-	while (i < rule.philo_num)
+	nbr = 0;
+	neg = 0;
+	while ((str[i] >= 1 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '+' || str[i] == '-')
 	{
-		
-	}		
+		if (str[i] == '-')
+			neg++;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9' && str[i] != '\0')
+	{
+		nbr = nbr * 10 + (str[i] - '0');
+		i++;
+	}
+	if (neg % 2 == 1)
+		return (nbr * -1);
+	return (nbr);
 }
