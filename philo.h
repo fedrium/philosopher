@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/21 17:38:18 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/04/24 17:06:09 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct s_rule {
 	int	eat_time;
 	int	philo_num;
 	pthread_t number;
+	t_con *con;
 }				t_rule;
 
 long	ft_atoi(char *str);
