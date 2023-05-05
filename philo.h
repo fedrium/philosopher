@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/24 17:06:09 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/04/28 15:47:49 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define PHILO
 
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
 
@@ -31,7 +33,8 @@ typedef struct s_rule {
 	int	sleep_time;
 	int	eat_time;
 	int	philo_num;
-	pthread_t number;
+	int full_time;
+	pthread_t *number;
 	t_con *con;
 }				t_rule;
 
