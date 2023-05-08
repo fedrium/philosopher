@@ -20,13 +20,14 @@
 #include <sys/time.h>
 
 typedef	struct s_con {
-	int	sleep;
-	int	food;
-	int	think;
+	int	slept;
+	int last_ate;
+	int	thinked;
 	int	status;
 }				t_con;
 
 typedef struct s_rule {
+	int	index;
 	long long time;
 	pthread_mutex_t *lock;
 	int	die_time;
