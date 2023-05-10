@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/28 15:47:49 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/09 17:04:46 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,7 @@ typedef struct s_rule {
 }				t_rule;
 
 long	ft_atoi(char *str);
+void	sleeping(t_rule *data);
+void	eating(t_rule *data);
 
 #endif
