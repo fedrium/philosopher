@@ -21,7 +21,7 @@
 
 typedef	struct s_con {
 	int	slept;
-	int last_ate;
+	long long last_ate;
 	int	thinked;
 	int	status;
 }				t_con;
@@ -29,7 +29,7 @@ typedef	struct s_con {
 typedef struct s_rule {
 	int	index;
 	long long time;
-	pthread_mutex_t *lock;
+	pthread_mutex_t *fork;
 	int	die_time;
 	int	sleep_time;
 	int	eat_time;
@@ -39,8 +39,10 @@ typedef struct s_rule {
 	t_con *con;
 }				t_rule;
 
-long	ft_atoi(char *str);
-void	sleeping(t_rule *data);
-void	eating(t_rule *data);
+long		ft_atoi(char *str);
+void		sleeping(t_rule *data, int index);
+void		eating(t_rule *data, int index);
+void		forks_init(pthread_mutex_t **forks, int num);
+long long	get_time();
 
 #endif
