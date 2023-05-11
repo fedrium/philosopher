@@ -30,6 +30,8 @@ typedef struct s_rule {
 	int	index;
 	long long time;
 	pthread_mutex_t *fork;
+	pthread_mutex_t index_lock;
+	pthread_mutex_t eat_lock;
 	int	die_time;
 	int	sleep_time;
 	int	eat_time;
@@ -44,5 +46,6 @@ void		sleeping(t_rule *data, int index);
 void		eating(t_rule *data, int index);
 void		forks_init(pthread_mutex_t **forks, int num);
 long long	get_time();
+void		condition(t_rule *data, int index);
 
 #endif
