@@ -3,16 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
+/*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:56:11 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/09 18:11:04 by yalee            ###   ########.fr       */
+/*   Updated: 2023/05/12 16:25:10 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 //number_of_philosophers time_to_die /time_to_eat/time_to_sleep [number_of_times_each_philosopher_must_eat]
+
+// 1 == eat 2 == sleep 3 == think 4 == die
+void	printer(t_rule *data, int index, int action)
+{
+	long long	time;
+
+	pthread_mutex_lock(&data->print_lock);
+	time = data->time - get_time();
+	if (action == 1)
+		printf("[%lli] Philo %i is eating\n", time, index + 1);
+	if (action == 2)
+		printf("[%lli] Philo %i is sleeping\n", time, index + 1);
+	if (action == 3)
+		printf("[%lli] Philo %i is thinking\n", time, index + 1);
+	if (action == 4)
+	{
+		printf("[%lli] Philo %i is thinking\n", time, index + 1);
+		death(data);
+	}
+	if (action == 5)
+	{
+		printf("[%lli] Philo %i is thinking\n", time + data->die_time, index + 1);
+		death(data);
+	}
+	pthread_mutex_unlock(&data->print_lock);
+}
+
+void	death(t_rule *data)
+{
+	int	i;
+	
+	i = 0;
+	while (i < data->philo_num - 1)
+	{
+		pthread_join(data->number[i], 0);
+		usleep(1000);
+		i++;
+	}
+}
 
 void	eating(t_rule *data, int index)
 {
@@ -21,7 +60,7 @@ void	eating(t_rule *data, int index)
 		pthread_mutex_lock(&data->fork[data->philo_num - 1]);
 	else
 		pthread_mutex_lock(&data->fork[index - 1]);
-	printf("philo %i is eating\n", index + 1);
+	printer(data, index, 1);
 	//eat
 	usleep(data->eat_time * 1000);
 	pthread_mutex_unlock(&data->fork[index]);
@@ -38,9 +77,10 @@ void	eating(t_rule *data, int index)
 void	sleeping(t_rule *data, int index)
 {
 	condition(data, index);
-	printf("philo %i is sleeping\n", index + 1);
+	printer(data, index, 2);
 	usleep(data->sleep_time * 1000);
-	printf("philo %i is thinking\n", index + 1);
+	printer(data, index, 3);
+	condition(data, index);
 	eating(data, index);
 }
 
@@ -52,12 +92,12 @@ void	condition(t_rule *data, int index)
 	pthread_mutex_lock(&data->eat_lock);
 	if (current_time - data->con->last_ate > data->die_time)
 	{
-		printf("philo %i has died\n", index);
+		printer(data, index, 4);
 		exit(0);
 	}
-	else if (current_time - data->con->last_ate + data->sleep_time > data->die_time)
+	if (current_time - data->con->last_ate + data->sleep_time > data->die_time)
 	{
-		printf("philo %i has died\n", index);
+		printer(data, index, 5);
 		exit(0);
 	}
 	pthread_mutex_unlock(&data->eat_lock);
@@ -74,8 +114,8 @@ void	*establish(void *temp)
 	pthread_mutex_unlock(&data->index_lock);
 
 	// while (!data->time) {}
-	if (index % 2 == 1)
-		usleep(data->die_time * 1000 / 2);
+	// if (index % 2 == 1)
+	// 	usleep(data->die_time * 1000 / 2);
 	eating(data, index);
 	return (0);
 }
@@ -105,6 +145,7 @@ int	main(int argc, char **argv)
 	}
 	pthread_mutex_init(&rule->index_lock, NULL);
 	pthread_mutex_init(&rule->eat_lock, NULL);
+	pthread_mutex_init(&rule->print_lock, NULL);
 	while (rule->index < rule->philo_num)
 	{
 		pthread_create(&rule->number[rule->index], NULL, (void *) establish, (void *) rule);
@@ -114,13 +155,6 @@ int	main(int argc, char **argv)
 		pthread_mutex_unlock(&rule->index_lock);
 	}
 	rule->time = get_time();
-	i = 0;
-	while (i < rule->philo_num - 1)
-	{
-		pthread_join(rule->number[i], 0);\
-		usleep(1000);
-		i++;
-	}
 	return (0);
 }
 

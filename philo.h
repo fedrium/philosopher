@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/09 17:04:46 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/12 16:20:52 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ typedef	struct s_con {
 	long long last_ate;
 	int	thinked;
 	int	status;
+	long long die_time;
+	int eat_time;
 }				t_con;
 
 typedef struct s_rule {
@@ -32,6 +34,7 @@ typedef struct s_rule {
 	pthread_mutex_t *fork;
 	pthread_mutex_t index_lock;
 	pthread_mutex_t eat_lock;
+	pthread_mutex_t print_lock;
 	int	die_time;
 	int	sleep_time;
 	int	eat_time;
@@ -47,5 +50,7 @@ void		eating(t_rule *data, int index);
 void		forks_init(pthread_mutex_t **forks, int num);
 long long	get_time();
 void		condition(t_rule *data, int index);
+void		printer(t_rule *data, int index, int action);
+void		death(t_rule *data);
 
 #endif
