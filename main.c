@@ -34,11 +34,13 @@ void	printer(t_rule *data, int index, int action)
 	if (action == 4)
 	{
 		printf("Philo %i is dead\n", index + 1);
+		usleep(100);
 		death(data);
 	}
 	if (action == 5)
 	{
 		printf("Philo %i is dead\n", index + 1);
+		usleep(100);
 		death(data);
 	}
 	pthread_mutex_unlock(&data->print_lock);
@@ -51,13 +53,6 @@ void	death(t_rule *data)
 	i = 0;
 	while (i < data->philo_num)
 	{
-		pthread_join(data->number[i], 0);
-		usleep(1000);
-		i++;
-	}
-	i = 0;
-	while (i < data->philo_num)
-	{
 		pthread_mutex_destroy(&data->fork[i]);
 		usleep(1000);
 		i++;
@@ -66,6 +61,13 @@ void	death(t_rule *data)
 	pthread_mutex_destroy(&data->eat_lock);
 	pthread_mutex_destroy(&data->print_lock);
 	pthread_mutex_destroy(&data->time_lock);
+	i = 0;
+	while (i < data->philo_num)
+	{
+		pthread_detach(data->number[i]);
+		usleep(1000);
+		i++;
+	}
 }
 
 void	eating(t_rule *data, int index)
@@ -100,17 +102,19 @@ void	sleeping(t_rule *data, int index)
 
 void	condition(t_rule *data, int index)
 {
-	long long current_time;
+	// long long current_time;
 
-	current_time = get_time();
+	// current_time = get_time();
 	pthread_mutex_lock(&data->eat_lock);
-	// printf("current: %lli\n", current_time);
-	if (current_time - data->con->last_ate > data->die_time)
+	// printf("current: %lli\n", get_time() - data->con->last_ate + data->sleep_time);
+	if (get_time() - data->con->last_ate >= data->die_time)
 	{
+		printf("working");
 		printer(data, index, 4);
 	}
-	if (current_time - data->con->last_ate + data->sleep_time > data->die_time)
+	if (get_time() - data->con->last_ate + data->sleep_time >= data->die_time)
 	{
+		printf("working");
 		printer(data, index, 5);
 	}
 	pthread_mutex_unlock(&data->eat_lock);
@@ -165,10 +169,17 @@ int	main(int argc, char **argv)
 	while (rule->index < rule->philo_num)
 	{
 		pthread_create(&rule->number[rule->index], NULL, (void *) establish, (void *) rule);
-		usleep(1000);
+		usleep(100);
 		pthread_mutex_lock(&rule->index_lock);
 		rule->index++;
 		pthread_mutex_unlock(&rule->index_lock);
+	}
+	i = 0;
+	while (i < rule->philo_num)
+	{
+		pthread_join(rule->number[i], 0);
+		usleep(1000);
+		i++;
 	}
 	return (0);
 }
