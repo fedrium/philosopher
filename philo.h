@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/12 16:46:56 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/14 15:21:34 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void		sleeping(t_rule *data, int index);
 void		eating(t_rule *data, int index);
 void		forks_init(pthread_mutex_t **forks, int num);
 long long	get_time();
-void		condition(t_rule *data, int index);
+void		condition(t_rule *data, int index, char chars);
 void		printer(t_rule *data, int index, int action);
-void		death(t_rule *data);
+int			death(t_rule *data);
 
 #endif
