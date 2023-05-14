@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:56:11 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/14 17:06:11 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/14 18:58:30 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ void	printer(t_rule *data, int index, int action)
 	{
 		printf("Philo %i is dead\n", index + 1);
 		usleep(100);
-		death(data);
+		exit(0);
+		// death(data);
 	}
 	if (action == 5)
 	{
 		printf("Philo %i is dead\n", index + 1);
 		usleep(100);
-		death(data);
+		exit(0);
+		// death(data);
 	}
 	pthread_mutex_unlock(&data->print_lock);
 }
@@ -67,9 +69,6 @@ int	death(t_rule *data)
 
 void	eating(t_rule *data, int index)
 {
-	pthread_mutex_lock(&data->eat_lock);
-	data->con->last_ate = get_time();
-	pthread_mutex_unlock(&data->eat_lock);
 	pthread_mutex_lock(&(data->fork[index]));
 	if (index == 0)
 		pthread_mutex_lock(&data->fork[data->philo_num - 1]);
@@ -77,11 +76,16 @@ void	eating(t_rule *data, int index)
 		pthread_mutex_lock(&data->fork[index - 1]);
 	printer(data, index, 1);
 	usleep(data->eat_time * 1000);
+	condition(data, index, 'a');
 	pthread_mutex_unlock(&data->fork[index]);
 	if (index == 0)
 		pthread_mutex_unlock(&data->fork[data->philo_num - 1]);
 	else
 		pthread_mutex_unlock(&(data->fork[index - 1]));
+	pthread_mutex_lock(&data->eat_lock);
+	data->con->last_ate = get_time();
+	data->con->time_ate++;
+	pthread_mutex_unlock(&data->eat_lock);
 	sleeping(data, index);
 }
 
@@ -91,7 +95,7 @@ void	sleeping(t_rule *data, int index)
 	printer(data, index, 2);
 	usleep(data->sleep_time * 1000);
 	printer(data, index, 3);
-	condition(data, index, 'b');
+	condition(data, index, 'a');
 	eating(data, index);
 }
 
@@ -99,9 +103,11 @@ void	condition(t_rule *data, int index, char chars)
 {
 	// long long current_time;
 
-	// current_time = get_time();
 	pthread_mutex_lock(&data->eat_lock);
-	// printf("current: %lli\n", get_time() - data->con->last_ate);
+	// current_time = get_time() - data->sleep_time;
+	pthread_mutex_lock(&data->print_lock);
+	printf("current: %lli\n", get_time() - data->con->last_ate);
+	pthread_mutex_unlock(&data->print_lock);
 	if (get_time() - data->con->last_ate > data->die_time && chars == 'a')
 	{
 		printer(data, index, 4);
@@ -121,10 +127,11 @@ void	*establish(void *temp)
 
 	pthread_mutex_lock(&data->index_lock);
 	index = data->index;
+	data->con->last_ate = data->time;
 	pthread_mutex_unlock(&data->index_lock);
 	// if (!data->time) {}
-	// if (index % 2 == 1)
-	// 	usleep(10000);
+	if (index % 2 == 1)
+		usleep(10000);
 	eating(data, index);
 	return (0);
 }
@@ -143,6 +150,8 @@ int	main(int argc, char **argv)
 	rule->number = malloc(sizeof(pthread_t) * rule->philo_num);
 	rule->eat_time = ft_atoi(argv[3]);
 	rule->sleep_time = ft_atoi (argv[4]);
+	rule->con->last_ate = get_time();
+	printf("time: %lli\n", rule->con->last_ate);
 	if (argv[5] != 0)
 		rule->full_time = ft_atoi(argv[5]);
 	rule->index = 0;
