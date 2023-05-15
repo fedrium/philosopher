@@ -69,22 +69,22 @@ int	death(t_rule *data)
 
 void	eating(t_rule *data, int index)
 {
-	pthread_mutex_lock(&data->eat_lock);
-	data->con[index].last_ate = get_time();
-	data->con->time_ate++;
-	pthread_mutex_unlock(&data->eat_lock);
 	pthread_mutex_lock(&(data->fork[index]));
 	if (index == 0)
 		pthread_mutex_lock(&data->fork[data->philo_num - 1]);
 	else
 		pthread_mutex_lock(&data->fork[index - 1]);
 	printer(data, index, 1);
+	pthread_mutex_lock(&data->eat_lock);
+	data->con[index].last_ate = get_time();
+	data->con->time_ate++;
+	pthread_mutex_unlock(&data->eat_lock);
 	usleep(data->eat_time * 1000);
-	pthread_mutex_unlock(&data->fork[index]);
 	if (index == 0)
 		pthread_mutex_unlock(&data->fork[data->philo_num - 1]);
 	else
 		pthread_mutex_unlock(&data->fork[index - 1]);
+	pthread_mutex_unlock(&data->fork[index]);
 	sleeping(data, index);
 }
 
@@ -123,9 +123,14 @@ void	*establish(void *temp)
 	index = data->index;
 	pthread_mutex_unlock(&data->index_lock);
 	// if (!data->time) {}
-	// if (index % 2 == 1)
-	// 	usleep(10000);
-	eating(data, index);
+	printf("index: %i\n", index);
+	if (index % 2 == 0)
+	{
+		usleep(1000);
+		eating(data, index);
+	}
+	else
+		eating(data, index);
 	return (0);
 }
 
@@ -168,9 +173,9 @@ int	main(int argc, char **argv)
 		pthread_mutex_lock(&rule->eat_lock);
 		rule->con[rule->index].last_ate = get_time();
 		rule->index++;
-		usleep(100);
 		pthread_mutex_unlock(&rule->eat_lock);
 		pthread_mutex_unlock(&rule->index_lock);
+		usleep(1000);
 	}
 	is_dead = 0;
 	i = 0;
@@ -192,7 +197,7 @@ int	main(int argc, char **argv)
 	while (i < rule->philo_num)
 	{
 		pthread_join(rule->number[i], 0);
-		usleep(1000);
+		usleep(100);
 		i++;
 	}
 	return (0);
