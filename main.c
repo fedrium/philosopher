@@ -69,6 +69,10 @@ int	death(t_rule *data)
 
 void	eating(t_rule *data, int index)
 {
+	pthread_mutex_lock(&data->eat_lock);
+	data->con[index].last_ate = get_time();
+	data->con->time_ate++;
+	pthread_mutex_unlock(&data->eat_lock);
 	pthread_mutex_lock(&(data->fork[index]));
 	if (index == 0)
 		pthread_mutex_lock(&data->fork[data->philo_num - 1]);
@@ -81,10 +85,6 @@ void	eating(t_rule *data, int index)
 		pthread_mutex_unlock(&data->fork[data->philo_num - 1]);
 	else
 		pthread_mutex_unlock(&data->fork[index - 1]);
-	pthread_mutex_lock(&data->eat_lock);
-	data->con[index].last_ate = get_time();
-	data->con->time_ate++;
-	pthread_mutex_unlock(&data->eat_lock);
 	sleeping(data, index);
 }
 
@@ -137,8 +137,8 @@ int	main(int argc, char **argv)
 
 	(void)argc;
 	rule = malloc(sizeof(t_rule));
-	rule->con = malloc(sizeof(t_con) * 100);
 	rule->philo_num = ft_atoi(argv[1]);
+	rule->con = malloc(sizeof(t_con) * rule->philo_num);
 	rule->fork = malloc(sizeof(pthread_mutex_t) * rule->philo_num);
 	rule->die_time = ft_atoi(argv[2]);
 	rule->number = malloc(sizeof(pthread_t) * rule->philo_num);
@@ -165,9 +165,11 @@ int	main(int argc, char **argv)
 	{
 		pthread_create(&rule->number[rule->index], NULL, (void *) establish, (void *) rule);
 		pthread_mutex_lock(&rule->index_lock);
+		pthread_mutex_lock(&rule->eat_lock);
 		rule->con[rule->index].last_ate = get_time();
 		rule->index++;
 		usleep(100);
+		pthread_mutex_unlock(&rule->eat_lock);
 		pthread_mutex_unlock(&rule->index_lock);
 	}
 	is_dead = 0;
