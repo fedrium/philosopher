@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 16:50:59 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/04/21 16:51:08 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:10:01 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,12 @@ long	ft_atoi(char *str)
 	if (neg % 2 == 1)
 		return (nbr * -1);
 	return (nbr);
+}
+
+int	ft_isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (0);
+	else
+		return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/14 15:21:34 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:01:30 by cyu-xian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef	struct s_con {
 	int	status;
 	long long die_time;
 	int time_ate;
+	
 }				t_con;
 
 typedef struct s_rule {
@@ -53,5 +54,12 @@ long long	get_time();
 void		condition(t_rule *data, int index, char chars);
 void		printer(t_rule *data, int index, int action);
 int			death(t_rule *data);
+void		innit_rule(t_rule *rule, char **argv);
+void		thread_innit(t_rule *rule);
+void		thread_create(t_rule *rule);
+void		*establish(void *temp);
+void		death_check(t_rule *rule);
+int			ft_isdigit(int c);
+int			check(int argc, char **argv);
 
 #endif
