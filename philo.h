@@ -37,11 +37,13 @@ typedef struct s_rule {
 	pthread_mutex_t eat_lock;
 	pthread_mutex_t time_lock;
 	pthread_mutex_t print_lock;
+	pthread_mutex_t death_lock;
 	int	die_time;
 	int	sleep_time;
 	int	eat_time;
 	int	philo_num;
 	int full_time;
+	int	someone_died;	
 	pthread_t *number;
 	t_con *con;
 }				t_rule;
@@ -61,5 +63,6 @@ void		*establish(void *temp);
 void		death_check(t_rule *rule);
 int			ft_isdigit(int c);
 int			check(int argc, char **argv);
+int			life_check(t_rule *data, int index);
 
 #endif

@@ -35,7 +35,7 @@ void	printer(t_rule *data, int index, int action)
 	{
 		printf("Philo %i is dead\n", index + 1);
 		// usleep(100);
-		death(data);
+		// death(data);
 	}
 	pthread_mutex_unlock(&data->print_lock);
 }
@@ -75,7 +75,7 @@ void	eating(t_rule *data, int index)
 	printer(data, index, 1);
 	pthread_mutex_lock(&data->eat_lock);
 	data->con[index].last_ate = get_time() + data->con->die_time;
-	data->con->time_ate++;
+	data->con[index].time_ate = data->con[index].time_ate + 1;
 	pthread_mutex_unlock(&data->eat_lock);
 	usleep(data->eat_time * 1000);
 	if (index == 0)
@@ -83,7 +83,7 @@ void	eating(t_rule *data, int index)
 	else
 		pthread_mutex_unlock(&data->fork[index - 1]);
 	pthread_mutex_unlock(&data->fork[index]);
-	sleeping(data, index);
+	// sleeping(data, index);
 }
 
 void	sleeping(t_rule *data, int index)
@@ -91,8 +91,19 @@ void	sleeping(t_rule *data, int index)
 	printer(data, index, 2);
 	usleep(data->sleep_time * 1000);
 	printer(data, index, 3);
-	eating(data, index);
+	// eating(data, index);
 }
+
+void	cycle(t_rule *data, int index)
+{
+	while (!data->someone_died)
+	{
+		eating(data, index);
+		// usleep(10);
+		sleeping(data, index);
+	}
+}
+
 
 void	*establish(void *temp)
 {

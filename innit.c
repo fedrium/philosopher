@@ -25,6 +25,7 @@ void	innit_rule(t_rule *rule, char **argv)
 	if (argv[5] != 0)
 		rule->full_time = ft_atoi(argv[5]);
 	rule->index = 0;
+	rule->someone_died = 0;
 }
 
 void	thread_innit(t_rule *rule)
@@ -41,6 +42,7 @@ void	thread_innit(t_rule *rule)
 	pthread_mutex_init(&rule->eat_lock, NULL);
 	pthread_mutex_init(&rule->print_lock, NULL);
 	pthread_mutex_init(&rule->time_lock, NULL);
+	pthread_mutex_init(&rule->death_lock, NULL);
 	pthread_mutex_lock(&rule->time_lock);
 	rule->time = get_time();
 	pthread_mutex_unlock(&rule->time_lock);
@@ -76,6 +78,9 @@ void	death_check(t_rule *rule)
 		if (rule->con[i].last_ate < (get_time() - (long long)rule->die_time))
 		{
 			is_dead = 1;
+			pthread_mutex_lock(&rule->death_lock);
+			rule->someone_died = 1;
+			pthread_mutex_unlock(&rule->death_lock);
 			printer(rule, i, 4);
 		}
 		pthread_mutex_unlock(&rule->eat_lock);
@@ -91,9 +96,9 @@ int	check(int argc, char **argv)
 	if (argc < 5 || argc > 6)
 		return (1);
 	i = 1;
-	j = 0;
-	while (i < argc + 1)
+	while (i < argc)
 	{
+		j = 0;
 		while (argv[i][j] != '\0')
 		{
 			if (ft_isdigit(argv[i][j]) == 1)
