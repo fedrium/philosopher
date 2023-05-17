@@ -6,7 +6,7 @@
 /*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/17 18:30:37 by yalee            ###   ########.fr       */
+/*   Updated: 2023/05/17 22:24:02 by yalee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ typedef	struct s_con {
 	int	status;
 	long long die_time;
 	int time_ate;
-	
+	int	is_full;
 }				t_con;
 
 typedef struct s_rule {
@@ -44,7 +44,8 @@ typedef struct s_rule {
 	int	eat_time;
 	int	philo_num;
 	int full_time;
-	int	someone_died;	
+	int	someone_died;
+	int	ate_num;
 	pthread_t *number;
 	t_con *con;
 }				t_rule;
@@ -62,6 +63,7 @@ void		thread_innit(t_rule *rule);
 void		thread_create(t_rule *rule);
 void		*establish(void *temp);
 void		death_check(t_rule *rule);
+void		full_check(t_rule *rule, int i);
 int			ft_isdigit(int c);
 int			check(int argc, char **argv);
 int			life_check(t_rule *data, int index);

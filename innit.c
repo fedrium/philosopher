@@ -6,7 +6,7 @@
 /*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:46:30 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/17 18:30:56 by yalee            ###   ########.fr       */
+/*   Updated: 2023/05/17 22:50:09 by yalee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	innit_rule(t_rule *rule, char **argv)
 {
+	int	i;
+
+	i = 0;
 	rule->philo_num = ft_atoi(argv[1]);
 	rule->con = malloc(sizeof(t_con) * rule->philo_num);
 	rule->fork = malloc(sizeof(pthread_mutex_t) * rule->philo_num);
@@ -26,6 +29,9 @@ void	innit_rule(t_rule *rule, char **argv)
 		rule->full_time = ft_atoi(argv[5]);
 	rule->index = 0;
 	rule->someone_died = 0;
+	rule->ate_num = 0;
+	while (i < rule->philo_num)
+		rule->con[i++].time_ate = 0;
 }
 
 void	thread_innit(t_rule *rule)
@@ -85,8 +91,19 @@ void	death_check(t_rule *rule)
 			printer(rule, i, 4);
 		}
 		pthread_mutex_unlock(&rule->eat_lock);
+		pthread_mutex_lock(&rule->counter_lock);
+		if (rule->ate_num == rule->philo_num)
+		{
+			is_dead = 1;
+			pthread_mutex_lock(&rule->death_lock);
+			rule->someone_died = 1;
+			pthread_mutex_unlock(&rule->death_lock);
+			printer(rule, i, 5);
+		}
+		pthread_mutex_unlock(&rule->counter_lock);
 		i++;
 	}
+	// death(rule);
 }
 
 int	check(int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:56:11 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/17 18:38:32 by yalee            ###   ########.fr       */
+/*   Updated: 2023/05/17 22:57:28 by yalee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,10 @@ void	eating(t_rule *data, int index)
 	else
 		pthread_mutex_unlock(&data->fork[index - 1]);
 	pthread_mutex_unlock(&data->fork[index]);
-	pthread_mutex_lock(&data->counter_lock);
 	data->con[index].time_ate++;
+	pthread_mutex_lock(&data->counter_lock);
+	if (data->con[index].time_ate == data->full_time)
+		data->ate_num ++;
 	pthread_mutex_unlock(&data->counter_lock);
 }
 
@@ -110,14 +112,6 @@ int	cycle(t_rule *data, int index)
 		pthread_mutex_unlock(&data->death_lock);
 		eating(data, index);
 		sleeping(data, index);
-		// pthread_mutex_lock(&data->counter_lock);
-		printf("ate: %i\n", data->full_time);
-		if (data->con[index].time_ate > data->full_time)
-		{
-			break;
-			// pthread_mutex_lock(&data->counter_lock);
-		}
-		// pthread_mutex_lock(&data->counter_lock);
 	}
 	return (0);
 }
@@ -153,7 +147,8 @@ int	main(int argc, char **argv)
 	}
 	innit_rule(rule, argv);
 	thread_innit(rule);
-	thread_create(rule);
+	if (rule->philo_num > 1)
+		thread_create(rule);
 	death_check(rule);
 	death(rule);
 	return (0);
