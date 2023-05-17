@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:57:00 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/16 17:01:30 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/17 18:30:37 by yalee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_rule {
 	pthread_mutex_t time_lock;
 	pthread_mutex_t print_lock;
 	pthread_mutex_t death_lock;
+	pthread_mutex_t counter_lock;
 	int	die_time;
 	int	sleep_time;
 	int	eat_time;
@@ -55,7 +56,7 @@ void		forks_init(pthread_mutex_t **forks, int num);
 long long	get_time();
 void		condition(t_rule *data, int index, char chars);
 void		printer(t_rule *data, int index, int action);
-int			death(t_rule *data);
+void		death(t_rule *data);
 void		innit_rule(t_rule *rule, char **argv);
 void		thread_innit(t_rule *rule);
 void		thread_create(t_rule *rule);

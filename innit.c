@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   innit.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cyu-xian <cyu-xian@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yalee <yalee@student.42.fr.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 15:46:30 by cyu-xian          #+#    #+#             */
-/*   Updated: 2023/05/16 17:14:09 by cyu-xian         ###   ########.fr       */
+/*   Updated: 2023/05/17 18:30:56 by yalee            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	thread_innit(t_rule *rule)
 	pthread_mutex_init(&rule->print_lock, NULL);
 	pthread_mutex_init(&rule->time_lock, NULL);
 	pthread_mutex_init(&rule->death_lock, NULL);
+	pthread_mutex_init(&rule->counter_lock, NULL);
 	pthread_mutex_lock(&rule->time_lock);
 	rule->time = get_time();
 	pthread_mutex_unlock(&rule->time_lock);
