@@ -83,7 +83,6 @@ void	eating(t_rule *data, int index)
 	else
 		pthread_mutex_unlock(&data->fork[index - 1]);
 	pthread_mutex_unlock(&data->fork[index]);
-	// sleeping(data, index);
 }
 
 void	sleeping(t_rule *data, int index)
@@ -94,14 +93,24 @@ void	sleeping(t_rule *data, int index)
 	// eating(data, index);
 }
 
-void	cycle(t_rule *data, int index)
+int	cycle(t_rule *data, int index)
 {
-	while (!data->someone_died)
+	while (1)
 	{
+		pthread_mutex_lock(&data->death_lock);
+		printf("dead: %i, index: %i\n", data->someone_died, index);
+		if (data->someone_died == 1)
+		{
+			printf("owkring\n");
+			break;
+		}
+		pthread_mutex_unlock(&data->death_lock);
 		eating(data, index);
-		// usleep(10);
 		sleeping(data, index);
+		// if (data->con[index].time_ate > data->eat_time && data->eat_time != 0)
+		// 	break;
 	}
+	return (0);
 }
 
 
@@ -117,17 +126,17 @@ void	*establish(void *temp)
 	if (index % 2 == 0)
 	{
 		usleep(1000);
-		eating(data, index);
+		cycle(data, index);
 	}
 	else
-		eating(data, index);
+		cycle(data, index);
 	return (0);
 }
 
 int	main(int argc, char **argv)
 {
 	t_rule	*rule;
-	int		i;
+	// int		i;
 
 	(void)argc;
 	rule = malloc(sizeof(t_rule)); 
@@ -140,13 +149,14 @@ int	main(int argc, char **argv)
 	thread_innit(rule);
 	thread_create(rule);
 	death_check(rule);
-	i = 0;
-	while (i < rule->philo_num)
-	{
-		pthread_join(rule->number[i], 0);
-		usleep(100);
-		i++;
-	}
+	death(rule);
+	// i = 0;
+	// while (i < rule->philo_num)
+	// {
+	// 	pthread_join(rule->number[i], 0);
+	// 	usleep(100);
+	// 	i++;
+	// }
 	return (0);
 }
 
